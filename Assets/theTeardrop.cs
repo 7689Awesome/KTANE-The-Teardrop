@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using UnityEngine;
 using KModkit;
 using Rnd = UnityEngine.Random;
@@ -78,9 +77,9 @@ public class theTeardrop : MonoBehaviour {
    }
 
    void CorrectWordChooser(){ 
-      int possibleWordsIndex = UnityEngine.Random.Range(0, 40);
+      int possibleWordsIndex = Rnd.Range(0, 40);
       correctWord = possibleWords[possibleWordsIndex].ToUpper();
-      Debug.Log("The decrypted word should be: " + correctWord);
+      Debug.LogFormat("[The Teardrop #{0}] The decrypted word should be: {1}", ModuleId, correctWord);
    }
 
    bool CalcIsPrime(int number) {
@@ -99,11 +98,11 @@ public class theTeardrop : MonoBehaviour {
          sumOfSerialNumberDigits += a;
       }
 
-      Debug.Log("Starting string: " + originalAlphabet);
+      Debug.LogFormat("[The Teardrop #{0}] Starting string: {1}", ModuleId, originalAlphabet);
       if((Bomb.GetBatteryCount()*Bomb.GetPortCount()) % 2 == 1){
          correctString = "ZYXWVUTSRQPONMLKJIHGFEDCBA";
-         Debug.Log("Since the product of the number of batteries and number of ports is odd, the string must be reversed.");
-         Debug.Log("Current string: " + correctString);
+         Debug.LogFormat("[The Teardrop #{0}] Since the product of the number of batteries and number of ports is odd, the string must be reversed.", ModuleId);
+         Debug.LogFormat("[The Teardrop #{0}] Current string: {1}", ModuleId, correctString);
       }
 
       Debug.Log(CalcIsPrime(sumOfSerialNumberDigits));
@@ -111,9 +110,9 @@ public class theTeardrop : MonoBehaviour {
          withoutPrimeLetters = correctString.Replace("P", "").Replace("R", "").Replace("I", "").Replace("M", "").Replace("E", "");
          correctString = "PRIME" + withoutPrimeLetters;
 
-         Debug.Log("Since the sum of the digits in the serial number is prime, the letters in the substring PRIME must be removed from the current string, then added as a whole at the beginning.");
-         Debug.Log("Current string: " + correctString);
-      }
+         Debug.LogFormat("[The Teardrop #{0}] Since the sum of the digits in the serial number is prime, the letters in the substring PRIME must be removed from the current string, then added as a whole at the beginning.", ModuleId);
+         Debug.LogFormat("[The Teardrop #{0}] Current string: {1}", ModuleId, correctString);
+        }
 
          foreach (var letter in Bomb.GetSerialNumberLetters()){
             numberOfSerialNumberLetters++;
@@ -127,9 +126,9 @@ public class theTeardrop : MonoBehaviour {
          firstHalf = correctString.Substring(0, halfLength);
          // Move the second half in front of the first half
          correctString = secondHalf + firstHalf;
-         Debug.Log("Since the number of batteries is greater than the number of letters in the serial number, the second half of the string must be cut and moved to the front. ");
-         Debug.Log("Current string: " + correctString);
-      }
+         Debug.LogFormat("[The Teardrop #{0}] Since the number of batteries is greater than the number of letters in the serial number, the second half of the string must be cut and moved to the front.", ModuleId);
+         Debug.LogFormat("[The Teardrop #{0}] Current string: {1}", ModuleId, correctString);
+        }
 
       serialNumber = Bomb.GetSerialNumber();
 
@@ -144,9 +143,9 @@ public class theTeardrop : MonoBehaviour {
       if (matchesBetweenSerialNumberAndTEARDROPS >= 1) {
          withoutCRYLetters = correctString.Replace("C", "").Replace("R", "").Replace("Y", "");
          correctString = withoutCRYLetters + "CRY";
-         Debug.Log("Since the Serial Number contains at least one character in the word TEARDROP, CRY must be extracted, then appended. ");
-         Debug.Log("Current string: " + correctString);
-      }
+         Debug.LogFormat("[The Teardrop #{0}] Since the Serial Number contains at least one character in the word TEARDROP, CRY must be extracted, then appended.", ModuleId);
+         Debug.LogFormat("[The Teardrop #{0}] Current string: {1}", ModuleId, correctString);
+        }
 
       foreach (var module in Bomb.GetModuleNames()){
          numberOfModules++;
@@ -157,26 +156,26 @@ public class theTeardrop : MonoBehaviour {
 
          correctString = MoveCharacterToEnd(correctString, evenIndexToMove);
 
-         Debug.Log("Since the total number of modules is even, the letter in the position of the last digit of the serial number must be extracted, then appended. ");
-         Debug.Log("Current string: " + correctString);
-      }
+         Debug.LogFormat("[The Teardrop #{0}] Since the total number of modules is even, the letter in the position of the last digit of the serial number must be extracted, then appended.", ModuleId);
+         Debug.LogFormat("[The Teardrop #{0}] Current string: {1}", ModuleId, correctString);
+        }
 
       if (numberOfModules % 2 == 1){
          oddIndexToMove = Bomb.GetSerialNumberNumbers().First()-1;
 
          correctString = MoveCharacterToEnd(correctString, oddIndexToMove);
 
-         Debug.Log("Since the total number of modules is odd, the letter in the position of the first digit of the serial number must be extracted, then appended. ");
-         Debug.Log("Current string: " + correctString);
+         Debug.LogFormat("[The Teardrop #{0}] Since the total number of modules is odd, the letter in the position of the first digit of the serial number must be extracted, then appended.", ModuleId);
+         Debug.LogFormat("[The Teardrop #{0}] Current string: {1}", ModuleId, correctString);
       }
 
       if ((Bomb.GetPortCount(Port.Parallel) == 1) && (Bomb.IsIndicatorOn("BOB"))){
          correctString = originalAlphabet;
-         Debug.Log("Since there is one parallel port and a lit BOB indicator is present, all previous rules no longer apply.");
-         Debug.Log("Current string: " + correctString);
+         Debug.LogFormat("[The Teardrop #{0}] Since there is one parallel port and a lit BOB indicator is present, all previous rules no longer apply.", ModuleId);
+         Debug.LogFormat("[The Teardrop #{0}] Current string: {1}", ModuleId, correctString);
       }
 
-      Debug.Log("Therefore, Final String:" + correctString);
+      Debug.LogFormat("[The Teardrop #{0}] Therefore, Final String: {1}", ModuleId, correctString);
 
       //========================================================================//
 
@@ -188,7 +187,7 @@ public class theTeardrop : MonoBehaviour {
          stage++;
       }
 
-      Debug.Log("Thus, the encrypted word is " + encryptedWord);
+      Debug.LogFormat("[The Teardrop #{0}] Thus, the encrypted word is {1}", ModuleId, encryptedWord);
       
       displayTextMesh.text = encryptedWord;
 
@@ -255,209 +254,152 @@ public class theTeardrop : MonoBehaviour {
       }
 
       if (Bomb.GetPortCount() % 2 == 0){
-         Debug.Log("Since the number of ports is even, the first column should be used.");
-         Debug.Log("The first indicator in alphabetical order is " + firstIndicator + ".");
+         Debug.LogFormat("[The Teardrop #{0}] Since the number of ports is even, the first column should be used.", ModuleId);
+         Debug.LogFormat("[The Teardrop #{0}] The first indicator in alphabetical order is {1}.", ModuleId, firstIndicator);
          if (firstIndicator == "BOB") {
             personCrying = condition1Names[0];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "CAR") {
             personCrying = condition1Names[1];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "CLR") {
             personCrying = condition1Names[2];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "FRK") {
             personCrying = condition1Names[3];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "FRQ") {
             personCrying = condition1Names[4];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "IND") {
             personCrying = condition1Names[5];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "MSA") {
             personCrying = condition1Names[6];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "NSA") {
             personCrying = condition1Names[7];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "SIG") {
             personCrying = condition1Names[8];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "SND") {
             personCrying = condition1Names[9];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "TRN") {
             personCrying = condition1Names[10];
-            Debug.Log("The person crying is " + personCrying +".");
          } else {
             personCrying = condition1Names[11];
-            Debug.Log("The person crying is " + personCrying +".");
          }
+
       } else if (Bomb.GetBatteryCount()%2 == 1){
-         Debug.Log("Since the number of batteries is odd, the second column should be used.");
-         Debug.Log("The first indicator in alphabetical order is " + firstIndicator + ".");
-         if (firstIndicator == "BOB") {
+         Debug.LogFormat("[The Teardrop #{0}] Since the number of batteries is odd, the second column should be used.", ModuleId);
+            Debug.LogFormat("[The Teardrop #{0}] The first indicator in alphabetical order is {1}.", ModuleId, firstIndicator);
+            if (firstIndicator == "BOB") {
             personCrying = condition2Names[0];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "CAR") {
             personCrying = condition2Names[1];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "CLR") {
             personCrying = condition2Names[2];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "FRK") {
             personCrying = condition2Names[3];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "FRQ") {
             personCrying = condition2Names[4];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "IND") {
             personCrying = condition2Names[5];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "MSA") {
             personCrying = condition2Names[6];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "NSA") {
             personCrying = condition2Names[7];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "SIG") {
             personCrying = condition2Names[8];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "SND") {
             personCrying = condition2Names[9];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "TRN") {
             personCrying = condition2Names[10];
-            Debug.Log("The person crying is " + personCrying +".");
          } else {
             personCrying = condition2Names[11];
-            Debug.Log("The person crying is " + personCrying +".");
          }
       } else if (CalcIsPrime(sumOfSerialNumberDigits)){
-         Debug.Log("Since the sum of the digits in the serial number is composite, the third column should be used.");
-         Debug.Log("The first indicator in alphabetical order is " + firstIndicator + ".");
-         if (firstIndicator == "BOB") {
+         Debug.LogFormat("[The Teardrop #{0}] Since the sum of the digits in the serial number is composite, the third column should be used.", ModuleId);
+            Debug.LogFormat("[The Teardrop #{0}] The first indicator in alphabetical order is {1}.", ModuleId, firstIndicator);
+            if (firstIndicator == "BOB") {
             personCrying = condition3Names[0];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "CAR") {
             personCrying = condition3Names[1];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "CLR") {
             personCrying = condition3Names[2];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "FRK") {
             personCrying = condition3Names[3];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "FRQ") {
             personCrying = condition3Names[4];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "IND") {
             personCrying = condition3Names[5];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "MSA") {
             personCrying = condition3Names[6];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "NSA") {
             personCrying = condition3Names[7];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "SIG") {
             personCrying = condition3Names[8];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "SND") {
             personCrying = condition3Names[9];
-            Debug.Log("The person crying is " + personCrying +".");
          } else if (firstIndicator == "TRN") {
             personCrying = condition3Names[10];
-            Debug.Log("The person crying is " + personCrying +".");
          } else {
             personCrying = condition3Names[11];
-            Debug.Log("The person crying is " + personCrying +".");
          } 
       } else if (numberOfOnIndicators > numberOfOffIndicators){
-         Debug.Log("Since the number of unlit indicators is greater than the number of unlit indicators, the fourth column should be used.");
-         Debug.Log("The first indicator in alphabetical order is " + firstIndicator + ".");
-         if (firstIndicator == "BOB") {
+         Debug.LogFormat("[The Teardrop #{0}] Since the number of unlit indicators is greater than the number of unlit indicators, the fourth column should be used.", ModuleId);
+            Debug.LogFormat("[The Teardrop #{0}] The first indicator in alphabetical order is {1}.", ModuleId, firstIndicator);
+            if (firstIndicator == "BOB") {
             personCrying = condition4Names[0];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "CAR") {
             personCrying = condition4Names[1];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "CLR") {
             personCrying = condition4Names[2];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "FRK") {
             personCrying = condition4Names[3];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "FRQ") {
             personCrying = condition4Names[4];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "IND") {
             personCrying = condition4Names[5];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "MSA") {
             personCrying = condition4Names[6];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "NSA") {
             personCrying = condition4Names[7];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "SIG") {
             personCrying = condition4Names[8];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "SND") {
             personCrying = condition4Names[9];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "TRN") {
             personCrying = condition4Names[10];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else {
             personCrying = condition4Names[11];
-            Debug.Log("The person crying is " + personCrying + ".");
          }
       } else {
-         Debug.Log("Since none of the previous conditions apply, the last column should be used.");
-         Debug.Log("The first indicator in alphabetical order is " + firstIndicator + ".");
+         Debug.LogFormat("[The Teardrop #{0}] Since none of the previous conditions apply, the last column should be used.", ModuleId);
+         Debug.LogFormat("[The Teardrop #{0}] The first indicator in alphabetical order is {1}.", ModuleId, firstIndicator);
          if (firstIndicator == "BOB") {
             personCrying = otherwiseNames[0];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "CAR") {
             personCrying = otherwiseNames[1];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "CLR") {
             personCrying = otherwiseNames[2];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "FRK") {
             personCrying = otherwiseNames[3];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "FRQ") {
             personCrying = otherwiseNames[4];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "IND") {
             personCrying = otherwiseNames[5];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "MSA") {
             personCrying = otherwiseNames[6];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "NSA") {
             personCrying = otherwiseNames[7];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "SIG") {
             personCrying = otherwiseNames[8];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "SND") {
             personCrying = otherwiseNames[9];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else if (firstIndicator == "TRN") {
             personCrying = otherwiseNames[10];
-            Debug.Log("The person crying is " + personCrying + ".");
          } else {
             personCrying = otherwiseNames[11];
-            Debug.Log("The person crying is " + personCrying + ".");
          }
       }
 
-      
-   }
+        Debug.LogFormat("[The Teardrop #{0}] The person crying is {1}.", ModuleId, personCrying);
+
+
+    }
 
    void FinalAnswer(){
       personCryingInNumbers = ConvertLettersToAlphabetPositions(personCrying);
@@ -473,7 +415,7 @@ public class theTeardrop : MonoBehaviour {
       }
       Debug.Log(sumOfLetterValuesOfDecryptedWord);
       finalAnswer = (sumOfLetterValuesOfPersonCrying + sumOfLetterValuesOfDecryptedWord)%10;
-      Debug.Log(finalAnswer + " is the correct last digit to press the button on.");
+      Debug.LogFormat("[The Teardrop #{0}] {1} is the correct last digit to press the button on.", ModuleId, finalAnswer);
    }
 
    void TeardropPressed() {
@@ -483,15 +425,15 @@ public class theTeardrop : MonoBehaviour {
          return;
       }
       string time = Bomb.GetFormattedTime();
-      Debug.Log(time + " is the current time.");
+      Debug.LogFormat("[The Teardrop #{0}] {1} is the current time.", ModuleId, time);
       char lastDigitChar = time[time.Length - 1];
       int lastDigit = int.Parse(lastDigitChar.ToString());
          if (lastDigit == finalAnswer){
             Solve();
-            Debug.Log("You pressed the button when the timer ended in " + finalAnswer + "! Well done!");
+            Debug.LogFormat("[The Teardrop #{0}] You pressed the button when the timer ended in {1}! Well done!", ModuleId, finalAnswer);
          } else {
             Strike();
-            Debug.Log("The last digit of the timer was " + lastDigit + ". Expected last digit was " + finalAnswer + ". Please try again.");
+            Debug.LogFormat("[The Teardrop #{0}] The last digit of the timer was {1}. Expected last digit was {2}. Please try again.", ModuleId, lastDigit, finalAnswer);
          }
    }
 
@@ -503,17 +445,5 @@ public class theTeardrop : MonoBehaviour {
 
    void Strike () {
       GetComponent<KMBombModule>().HandleStrike();
-   }
-
-#pragma warning disable 414
-   private readonly string TwitchHelpMessage = @"Use !{0} to do something.";
-#pragma warning restore 414
-
-   IEnumerator ProcessTwitchCommand (string Command) {
-      yield return null;
-   }
-
-   IEnumerator TwitchHandleForcedSolve () {
-      yield return null;
    }
 }
