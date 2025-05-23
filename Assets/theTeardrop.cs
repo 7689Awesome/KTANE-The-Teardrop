@@ -91,7 +91,7 @@ public class theTeardrop : MonoBehaviour {
     if (number == 2) return true;
     if (number % 2 == 0) return false; // Even number     
 
-    for (int i = 2; i <= Math.Sqrt(number); i++) { // Check up to the square root
+    for (int i = 3; i <= (int)Math.Floor(Math.Sqrt(number)); i += 2) { // Check up to the square root
        if (number % i == 0) return false;
     }
     return true;
