@@ -97,9 +97,6 @@ public class theTeardrop : MonoBehaviour {
     return true;
 }
    void EncryptWord(){
-      foreach (var a in Bomb.GetSerialNumberNumbers()){
-         sumOfSerialNumberDigits += a;
-      }
       Debug.LogFormat("[The Teardrop #{0}] ===========STEP 2===========",ModuleId);
       Debug.LogFormat("[The Teardrop #{0}] The starting alphabet string is {1}.",ModuleId,originalAlphabet);
       if((Bomb.GetBatteryCount()*Bomb.GetPortCount()) % 2 == 1){
@@ -248,15 +245,20 @@ public class theTeardrop : MonoBehaviour {
         return result;
     }
 
-   void GetFirstIndicator(){
+   void GetFirstIndicator()
+   {
       string[] sortedIndicators = Bomb.GetIndicators().OrderBy(s => s).ToArray();
-      
-      if ((sortedIndicators != null) && (sortedIndicators.Length > 0)){
+
+      if ((sortedIndicators != null) && (sortedIndicators.Length > 0))
+      {
          firstIndicator = sortedIndicators[0];
-      } else {
+      }
+      else
+      {
          firstIndicator = "none";
          Debug.Log("There are no indicators.");
       }
+      
    }
    
    void DeterminePersonCrying(){
@@ -266,6 +268,10 @@ public class theTeardrop : MonoBehaviour {
 
       foreach (var b in Bomb.GetOffIndicators()){
          numberOfOffIndicators += 1;
+      }
+
+      foreach (var a in Bomb.GetSerialNumberNumbers()){
+         sumOfSerialNumberDigits += a;
       }
 
       Debug.LogFormat("[The Teardrop #{0}] ===========STEP 1===========",ModuleId);
@@ -525,14 +531,37 @@ public class theTeardrop : MonoBehaviour {
    }
 
 #pragma warning disable 414
-   private readonly string TwitchHelpMessage = @"Use !{0} to do something.";
+   private readonly string TwitchHelpMessage = @"Use !{0} press (number) to press the teardrop when the last digit of the timer matches said number.";
 #pragma warning restore 414
 
    IEnumerator ProcessTwitchCommand (string Command) {
+      Command = Command.Trim().ToUpper();
       yield return null;
+      string[] Commands = Command.Split(' ');
+      Debug.Log(Commands[0]);
+      Debug.Log(Commands[1]);
+      Debug.Log(Commands[1].GetType());
+      if ((Commands[0] != "PRESS") || (!Char.IsNumber(Commands[1],0))){
+         yield return "sendtochaterror Error! Check if 'press' is spelled correctly, or if the input beside press is actually a number.";
+         yield break;
+      }
+      int numberToPressTeardropOn = Convert.ToInt32(Commands[1]);
+      Debug.Log(numberToPressTeardropOn);
+      if (numberToPressTeardropOn < 0 || numberToPressTeardropOn >= 10){
+            yield return "sendtochaterror Error! Check if the number typed is a one-digit whole number.";
+            yield break;
+      }
+
+      while (Mathf.Floor(Bomb.GetTime()) % 10 != numberToPressTeardropOn){
+         yield return null;
+      }
+      Teardrop.OnInteract();
    }
 
    IEnumerator TwitchHandleForcedSolve () {
-      yield return null;
+      while (Mathf.Floor(Bomb.GetTime()) % 10 != finalAnswer){
+         yield return null;
+      }
+      Teardrop.OnInteract();
    }
 }
