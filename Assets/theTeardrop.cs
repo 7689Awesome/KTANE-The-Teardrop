@@ -537,22 +537,20 @@ public class theTeardrop : MonoBehaviour {
    IEnumerator ProcessTwitchCommand (string Command) {
       Command = Command.Trim().ToUpper();
       yield return null;
-      string[] Commands = Command.Split(' ');
-      Debug.Log(Commands[0]);
-      Debug.Log(Commands[1]);
-      Debug.Log(Commands[1].GetType());
-      if ((Commands[0] != "PRESS") || (!Char.IsNumber(Commands[1],0))){
+
+      // RemoveEmptyEntries avoids empty strings from extra spaces
+      string[] Commands = Command.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+      // Validate length AND format BEFORE touching Commands[1]
+      if (Commands.Length != 2 || Commands[0] != "PRESS" || Commands[1].Length != 1 || !Char.IsDigit(Commands[1][0])) {
          yield return "sendtochaterror Error! Check if 'press' is spelled correctly, or if the input beside press is actually a number.";
          yield break;
       }
+
       int numberToPressTeardropOn = Convert.ToInt32(Commands[1]);
       Debug.Log(numberToPressTeardropOn);
-      if (numberToPressTeardropOn < 0 || numberToPressTeardropOn >= 10){
-            yield return "sendtochaterror Error! Check if the number typed is a one-digit whole number.";
-            yield break;
-      }
 
-      while (Mathf.Floor(Bomb.GetTime()) % 10 != numberToPressTeardropOn){
+      while (Mathf.Floor(Bomb.GetTime()) % 10 != numberToPressTeardropOn) {
          yield return null;
       }
       Teardrop.OnInteract();
